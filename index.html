@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>GifTastic</title>
+    <link rel="stylesheet" type="text/css" href="assets/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+</head>
+<header id="header">
+    <h1>Superhero Gif Mania!</h1>
+</header>
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- Rendered Buttons will be dumped here  -->
+        <div id="buttons-view"></div>
+
+        <form id="superhero-form">
+            <label for="superhero-input">Add a superhero</label>
+            <input type="text" id="superhero-input">
+            <br>
+            <!-- Button triggers new superhero to be added -->
+            <input id="add-superhero" type="submit" value="Add a superhero">
+        </form>
+
+            <!--Gifs will be dumped here -->
+    <div id="superheroes-view"></div>
+
+        <!--jQuery -->
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+        <script type="text/javascript" src="assets/javascript/giftastic.js"></script>
+</body>
+
+</html>
