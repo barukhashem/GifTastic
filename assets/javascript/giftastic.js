@@ -30,137 +30,141 @@
 // Creates an array of superheroes:
 var superheroes = ["Superman", "Wonder Woman"];
 
-// This function re-renders the HTML to display the gifs:
-function displaySuperheroGifs() {
+// // Creates a button for each superhero:
+function renderButtons() {
+
+    // Deletes any existing superheroes prior to adding new superheroes to avoid duplicate buttons:
+    $("#buttons-view").empty();
+
+    // Loops through the superheroes array:
+    for (var i = 0; i < superheroes.length; i++) {
+        // console.log(superheroes);
+        // Then dynamicaly generating buttons for each superhero in the array
+        // This code $("<button>") is all jQuery needs to create the beginning and end tag. (<button></button>)
+        var a = $("<button>");
+        // Adding a class of superhero-btn to our button:
+        a.addClass("superhero-btn");
+        // Adding a data-attribute:
+        a.attr("data-name", superheroes[i]);
+        // Providing the initial button text:
+        a.text(superheroes[i]);
+        // Adding the button to the buttons-view div:
+        $("#buttons-view").append(a);
+    }
+}
+renderButtons();
+
+// This function handles events where a movie button is clicked
+$(".superhero-btn").on("click", function (event) {
 
     var superhero = $(this).attr("data-name");
+    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + superhero + "&limit=10&rating=g&rating=pg&api_key=6XGYTHgYrJJWFYwVAXX2TAM5LFzeuyvw";
 
-    // In the query URL, this switches the protocol from http to https.
-    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + superhero + "&limit=10&rating=g&api_key=6XGYTHgYrJJWFYwVAXX2TAM5LFzeuyvw";
-
-    // Creates an AJAX call to the GIPHY API for the specific superhero button being clicked:
-
+    // Creating an AJAX call for the specific superhero button being clicked:
     $.ajax({
         url: queryURL,
         method: "GET"
     }).then(function (response) {
-        console.log(response);
+        var data = response.data;
+        console.log(data);
+        for (var i = 0; i < data.length; i++) {
+            var gif = data[i];
 
-        // Saves results as a variable:
-        var results = response;
+            // Creating a div to hold the gif:
+            var superheroDiv = $("<div class='superhero'>");
 
-        // Creates a generic div to hold the results:
-        var supeheroDiv = $("<div class='superhero'>");
+            // Storing the rating data:
+            var rating = data[i].rating;
+            console.log(rating)
+            // Creating an element to have the rating displayed:
+            var pOne = $("<p>").text("Rating: " + rating);
 
+            // Displaying the rating:
+            superheroDiv.text(pOne);
 
+            // Retrieving the URL for the image:
+            var imgURL = response.data.image_original_url;
 
+            // Creating an element to hold the image:
+            var image = $("<img>");
+            image.attr("src", gif.images.original_still.url);
 
+            // Calling renderButtons which handles the processing of our superhero array:
+            $("#superheroes-view").append(image)
+        }
+    });
+});
 
+// This function handles events where a movie button is clicked
+$("#add-superhero").on("click", function (event) {
+    event.preventDefault();
+    // This line grabs the input from the textbox:
+    var superhero = $("#superhero-input").val().trim();
 
+    // Adding superhero from the textbox to our array:
+    superheroes.push(superhero);
 
+    // Calling renderButtons which handles the processing of our superhero array:
+    renderButtons();
+});
 
+// COPIED FROM SOLVED:
 
+    //       // Retrieving the URL for the image
+    //       var imgURL = response.Poster;
 
+    //       // Creating an element to hold the image
+    //       var image = $("<img>").attr("src", imgURL);
 
-// // Creates a button for each superhero:
-// function createButtons() {
+    //       // Appending the image
+    //       movieDiv.append(image);
 
-//     // Deletes any existing superheroes prior to adding new superheroes to avoid duplicate buttons:
-//     $("#buttons-view").empty();
+    //       // Putting the entire movie above the previous movies
+    //       $("#movies-view").prepend(movieDiv);
+    //     });
 
-//     // Loops through the superheroes array:
-//     for (var i = 0; i < superheroes.length; i++) {
-//         // Dynamically creates a button for each superhero in the array:
-//         var a = $("<button>");
-//         // Adds a class of superhero-btn to the button:
-//         a.addClass("superhero-btn");
-//         // Adds a data-attribute:
-//         a.attr("data-name", superheroes[i]);
-//         // Provides the initial button text:
-//         a.text(superheroes[i]);
-//         // Adds the button to the superheroes-view div:
-//         $("#buttons-view").append(a);
-//     }
-// }
+    //   }
 
-// // This function handles events where a superhero button is clicked:
-// $("#addSuperhero").on("click", function (event) {
+    //   // Function for displaying movie data
+    //   function renderButtons() {
 
-//     // Temporarily prevents the button's default functioning:
-//     event.preventDefault();
+    //     // Deleting the movies prior to adding new movies
+    //     // (this is necessary otherwise you will have repeat buttons)
+    //     $("#buttons-view").empty();
 
-//     // Grabs the user's input from the textbox:
-//     var superhero = $("#superhero-input").val().trim();
+    //     // Looping through the array of movies
+    //     for (var i = 0; i < movies.length; i++) {
 
-//     // Adds the movie from the textbox to our array:
-//     superheroes.push(superhero);
-//     console.log(superheroes);
+    //       // Then dynamicaly generating buttons for each movie in the array
+    //       // This code $("<button>") is all jQuery needs to create the beginning and end tag. (<button></button>)
+    //       var a = $("<button>");
+    //       // Adding a class of movie-btn to our button
+    //       a.addClass("movie-btn");
+    //       // Adding a data-attribute
+    //       a.attr("data-name", movies[i]);
+    //       // Providing the initial button text
+    //       a.text(movies[i]);
+    //       // Adding the button to the buttons-view div
+    //       $("#buttons-view").append(a);
+    //     }
+    //   }
 
-//     // This function creates buttons for all the superheroes, including the user's input:
-//     createButtons();
+    //   // This function handles events where a movie button is clicked
+    //   $("#add-movie").on("click", function(event) {
+    //     event.preventDefault();
+    //     // This line grabs the input from the textbox
+    //     var movie = $("#movie-input").val().trim();
 
-//     // Users can hit "Enter" instead of clicking Submit:
-//     return false;
-// })
+    //     // Adding movie from the textbox to our array
+    //     movies.push(movie);
 
-// // This function re-renders the HTML to display the gifs:
-// function displaySuperheroGifs() {
+    //     // Calling renderButtons which handles the processing of our movie array
+    //     renderButtons();
+    //   });
 
-//     var superhero = $(this).attr("data-name");
+    //   // Adding a click event listener to all elements with a class of "movie-btn"
+    //   $(document).on("click", ".movie-btn", displayMovieInfo);
 
-//     // In the query URL, this switches the protocol from http to https.
-//     var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + superhero + "&limit=10&rating=g&api_key=6XGYTHgYrJJWFYwVAXX2TAM5LFzeuyvw";
-
-//     // Creates an AJAX call to the GIPHY API for the specific superhero button being clicked:
-
-//     $.ajax({
-//         url: queryURL,
-//         method: "GET"
-//     }).then(function (response) {
-//         console.log(response.data);
-
-//         // Saves results as a variable:
-//         var results = response.data;
-
-//         // Loops through each superhero gif and adds these variables:
-//         for (var i = 0; i < results.length; i++) {
-
-//             // Creates a generic div to hold the results:
-//             var gifDiv = $("<div class=gifs>");
-
-//             var superheroGif = $("<img>");
-
-//             superheroGif.attr("src", results[i].images.fixed_height_still.url);
-
-//             // Displays the gif rating when hovering:
-//             superheroGif.attr("title", "Rating: " + results[i].rating);
-//             superheroGif.attr("data-still", results[i].images.fixed_height_still.url);
-//             superheroGif.attr("data-state", "still");
-//             superheroGif.addClass("gif");
-//             superheroGif.attr("data-animate", results[i].images.fixed_height.url);
-//             // var rating = results[i].rating;
-//             // var p = $("<p>"").text("Rating: " + rating);
-//             gifDiv.append(superheroGif)
-//             // gifDiv.append(p)
-//             $("#superheroes-view").prepend(gifDiv);
-//         }
-//     });
-// }
-
-// // Function to animate gifs:
-// $(document).on("click", ".gif", function () {
-//     var state = $(this).attr("data-state");
-//     if (state === "still") {
-//         $(this).attr("src", $(this).data("animate"));
-//         $(this).attr("data-state", "animate");
-//     } else {
-//         $(this).attr("src", $(this).data("still"));
-//         $(this).attr("data-state", "still");
-//     };
-// });
-
-// // Function to display gifs:
-// $(document).on("click", ".superhero", displaySuperheroGifs);
-
-// // Initially calls the createButtons function:
-// createButtons();
+    //   // Calling the renderButtons function to display the intial buttons
+    //   renderButtons();
+    // </script>
