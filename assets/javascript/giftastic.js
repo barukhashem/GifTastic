@@ -14,7 +14,7 @@
 
 // When the user clicks one of the still GIPHY images, the gif should animate.
 
-// If the user clicks the gif again, it should stop playing.
+// When the user clicks the gif again, it should stop playing.
 
 // Under every gif, display its rating (PG, G).
 
@@ -28,9 +28,61 @@
 // BEGIN CODING HERE:
 
 // Creates an array of superheroes:
-var superheroes = ["Superman", "Wonder Woman"];
+var superheroes = ["Superman", "Wonder Woman", "Batman", "Aquaman", "Green Lantern", "The Flash", "Iron Man", "Thor", "Captain America", "Dr. Strange", "The Hulk", "Spiderman", "Wolverine", "X-Men", "Deadpool", "Fantastic Four", "Guardians of the Galaxy"];
 
-// // Creates a button for each superhero:
+// Creates a function to create gifs for each superhero:
+function displaySuperheroGifs() {
+
+    // handles events:
+    var superhero = $(this).attr("data-name");
+
+    // sets query to giphy's api:
+    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + superhero + "&limit=10&rating=g&rating=pg&api_key=6XGYTHgYrJJWFYwVAXX2TAM5LFzeuyvw";
+
+    // Creates an AJAX call for the specific superhero button being clicked:
+    $.ajax({
+        url: queryURL,
+        method: "GET"
+    }).then(function (response) {
+        var data = response.data;
+        console.log(data);
+        for (var i = 0; i < data.length; i++) {
+            var gif = response.data[i];
+
+            // Creates a div to hold the gif:
+            var superheroDiv = $("<div class='superhero'>");
+
+            // Stores the rating data:
+            var rating = data[i].rating;
+            console.log(rating)
+
+            // Creates an element to have the rating displayed:
+            var p = $("<p>").text("Rating: " + rating);
+
+            // Displays the rating:
+            superheroDiv.append(p);
+
+            // var div = $("<div class='col-12 col-md-6'>").append(p, image);
+
+            // Retrieves the URL for the image:
+            var imgURL = response.data.image_original_url;
+
+            // Creates an element to hold the image:
+            var image = $("<img>");
+            image.attr("src", data[i].images.fixed_width_still.url);
+            image.attr("data-still", data[i].images.fixed_width_still.url);
+            image.attr("data-animate", data[i].images.fixed_width.url);
+            image.attr("data-state", "still");
+            image.attr("class", "gifs");
+            superheroDiv.append(image)
+
+            // Calls renderButtons which handles the processing of our superhero array:
+            $("#superheroes-view").append(superheroDiv)
+        }
+    });
+}
+
+// Creates a button for each superhero:
 function renderButtons() {
 
     // Deletes any existing superheroes prior to adding new superheroes to avoid duplicate buttons:
@@ -54,117 +106,47 @@ function renderButtons() {
 }
 renderButtons();
 
-// This function handles events where a movie button is clicked
-$(".superhero-btn").on("click", function (event) {
-
-    var superhero = $(this).attr("data-name");
-    var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + superhero + "&limit=10&rating=g&rating=pg&api_key=6XGYTHgYrJJWFYwVAXX2TAM5LFzeuyvw";
-
-    // Creating an AJAX call for the specific superhero button being clicked:
-    $.ajax({
-        url: queryURL,
-        method: "GET"
-    }).then(function (response) {
-        var data = response.data;
-        console.log(data);
-        for (var i = 0; i < data.length; i++) {
-            var gif = data[i];
-
-            // Creating a div to hold the gif:
-            var superheroDiv = $("<div class='superhero'>");
-
-            // Storing the rating data:
-            var rating = data[i].rating;
-            console.log(rating)
-            // Creating an element to have the rating displayed:
-            var pOne = $("<p>").text("Rating: " + rating);
-
-            // Displaying the rating:
-            superheroDiv.text(pOne);
-
-            // Retrieving the URL for the image:
-            var imgURL = response.data.image_original_url;
-
-            // Creating an element to hold the image:
-            var image = $("<img>");
-            image.attr("src", gif.images.original_still.url);
-
-            // Calling renderButtons which handles the processing of our superhero array:
-            $("#superheroes-view").append(image)
-        }
-    });
-});
-
-// This function handles events where a movie button is clicked
+// This function handles events where a superhero button is clicked:
 $("#add-superhero").on("click", function (event) {
+    // event.preventDefault() prevents the form from trying to refresh or submit itself.
+    // We're using a form so that the user can hit enter instead of clicking the button if they want:
     event.preventDefault();
     // This line grabs the input from the textbox:
     var superhero = $("#superhero-input").val().trim();
 
-    // Adding superhero from the textbox to our array:
+    // Adds superhero from the textbox to our array:
     superheroes.push(superhero);
 
-    // Calling renderButtons which handles the processing of our superhero array:
+    // Calls renderButtons which handles the processing of our superhero array:
     renderButtons();
 });
 
-// COPIED FROM SOLVED:
+// This function handles events where a movie button is clicked
+$(document).on("click", ".superhero-btn", displaySuperheroGifs);
 
-    //       // Retrieving the URL for the image
-    //       var imgURL = response.Poster;
+$(document).on("click", ".gifs", function () {
+    //     var $this = $(this);
 
-    //       // Creating an element to hold the image
-    //       var image = $("<img>").attr("src", imgURL);
+    // Make a variable named state and then store the image's data-state into it.
+    // Use the .attr() method for this.
+    var state = $(this).attr("data-state");
 
-    //       // Appending the image
-    //       movieDiv.append(image);
+    // Check if the variable state is equal to 'still',
+    if (state === "still") {
 
-    //       // Putting the entire movie above the previous movies
-    //       $("#movies-view").prepend(movieDiv);
-    //     });
+        // then update the src attribute of this image to its data-animate value:
+        $(this).attr("src", $(this).attr("data-animate"));
 
-    //   }
+        // then update the data-state attribute to "animate":
+        $(this).attr("data-state", "animate");
 
-    //   // Function for displaying movie data
-    //   function renderButtons() {
+        // If state is equal to 'animate':
+    } else if (state === "animate") {
 
-    //     // Deleting the movies prior to adding new movies
-    //     // (this is necessary otherwise you will have repeat buttons)
-    //     $("#buttons-view").empty();
+        // then update the src attribute of this image to its data-still value:
+        $(this).attr("src", $(this).attr("data-still"));
 
-    //     // Looping through the array of movies
-    //     for (var i = 0; i < movies.length; i++) {
-
-    //       // Then dynamicaly generating buttons for each movie in the array
-    //       // This code $("<button>") is all jQuery needs to create the beginning and end tag. (<button></button>)
-    //       var a = $("<button>");
-    //       // Adding a class of movie-btn to our button
-    //       a.addClass("movie-btn");
-    //       // Adding a data-attribute
-    //       a.attr("data-name", movies[i]);
-    //       // Providing the initial button text
-    //       a.text(movies[i]);
-    //       // Adding the button to the buttons-view div
-    //       $("#buttons-view").append(a);
-    //     }
-    //   }
-
-    //   // This function handles events where a movie button is clicked
-    //   $("#add-movie").on("click", function(event) {
-    //     event.preventDefault();
-    //     // This line grabs the input from the textbox
-    //     var movie = $("#movie-input").val().trim();
-
-    //     // Adding movie from the textbox to our array
-    //     movies.push(movie);
-
-    //     // Calling renderButtons which handles the processing of our movie array
-    //     renderButtons();
-    //   });
-
-    //   // Adding a click event listener to all elements with a class of "movie-btn"
-    //   $(document).on("click", ".movie-btn", displayMovieInfo);
-
-    //   // Calling the renderButtons function to display the intial buttons
-    //   renderButtons();
-    // </script>
+        // and update the data-state attribute to "still":
+        $(this).attr("data-state", "still");
+    }
+})
