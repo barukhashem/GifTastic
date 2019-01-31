@@ -92,7 +92,7 @@ function displaySuperheroGifs() {
             superheroDiv.append(image)
 
             // This calls superheroes-view which handles the processing of our superhero array:
-            $("#superheroes-view").append(superheroDiv)
+            $("#superheroes-view").prepend(superheroDiv)
         }
     });
 }
